@@ -7,18 +7,15 @@ import com.pat.repo.UrlLinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @EnableSwagger2
 @SpringBootApplication(scanBasePackages = {"com.pat"})
-public class SportpatApplication implements CommandLineRunner {
+public class PatToolApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
-        SpringApplication.run(SportpatApplication.class, args);
+        SpringApplication.run(PatToolApplication.class, args);
     }
 
     @Autowired

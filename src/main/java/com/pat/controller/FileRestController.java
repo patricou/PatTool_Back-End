@@ -11,6 +11,7 @@ import com.pat.repo.MembersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -23,6 +24,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 /**
  * Created by patricou on 5/8/2017.
@@ -30,6 +41,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 public class FileRestController {
 
+    @Value("${app.uploaddir}")
+    private String uploadDir;
     @Autowired
     private EvenementsRepository evenementsRepository;
     @Autowired
@@ -56,6 +69,46 @@ public class FileRestController {
        return ResponseEntity.ok()
                 .headers(headers)
                 .body( new InputStreamResource(gridFsFile.getInputStream()));
+    }
+
+    @PostMapping("/uploadondisk")
+    public ResponseEntity<String> handleFileUpload(@RequestParam("files") MultipartFile[] files) {
+
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    try {
+
+                        LocalDate date = LocalDate.now();
+
+                        // Create a formatter
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd");
+                        Integer year = date.getYear();
+
+                        // Format the LocalDateTime object using the formatter
+                        String formattedDate = date.format(formatter);
+
+                        String dir  = uploadDir + year + File.separator+formattedDate+"_from_uploaded";
+
+                        Path uploadPath = Paths.get(dir);
+
+                        log.info("Dir : "+uploadPath.getFileName());
+
+                        if (!Files.exists(uploadPath)) {
+                            Files.createDirectories(uploadPath);
+                        }
+
+                        Path filePath = uploadPath.resolve(file.getOriginalFilename());
+
+                        Files.copy(file.getInputStream(), filePath,StandardCopyOption.REPLACE_EXISTING);
+
+                        log.info("File Uploaded : " + filePath + " Successfully");
+
+                    } catch (IOException e) {
+                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload error : " + e.toString());
+                    }
+                }
+            }
+        return ResponseEntity.ok("Upload successful");
     }
 
     @RequestMapping( value = "/uploadfile/{userId}/{evenementid}", method = RequestMethod.POST, consumes = "multipart/form-data")

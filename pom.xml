@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.pat</groupId>
-	<artifactId>sportpat</artifactId>
+	<artifactId>pattool</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>sportpat</name>
+	<name>pattool</name>
 	<description>sport pat with Spring Boot</description>
 
 	<parent>
