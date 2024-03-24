@@ -74,37 +74,44 @@ public class FileRestController {
     @PostMapping("/uploadondisk")
     public ResponseEntity<String> handleFileUpload(@RequestParam("files") MultipartFile[] files) {
 
-            for (MultipartFile file : files) {
+
+        LocalDate date = LocalDate.now();
+
+        // Create a formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd");
+        Integer year = date.getYear();
+
+        // Format the LocalDateTime object using the formatter
+        String formattedDate = date.format(formatter);
+
+        String dir  = uploadDir + year + File.separator+formattedDate+"_from_uploaded";
+        log.info("Dir : " +dir);
+
+
+        for (MultipartFile file : files) {
+
                 if (!file.isEmpty()) {
                     try {
 
-                        LocalDate date = LocalDate.now();
-
-                        // Create a formatter
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd");
-                        Integer year = date.getYear();
-
-                        // Format the LocalDateTime object using the formatter
-                        String formattedDate = date.format(formatter);
-
-                        String dir  = uploadDir + year + File.separator+formattedDate+"_from_uploaded";
-
                         Path uploadPath = Paths.get(dir);
-
-                        log.info("Dir : "+uploadPath.getFileName());
 
                         if (!Files.exists(uploadPath)) {
                             Files.createDirectories(uploadPath);
                         }
 
+                        //log.info("uploadPath : "+uploadPath.getParent()+ " / "+uploadPath.getFileName());
+
                         Path filePath = uploadPath.resolve(file.getOriginalFilename());
+
+                        //log.info("filePath : " +filePath.getParent()+ " / " + filePath.getFileName());
 
                         Files.copy(file.getInputStream(), filePath,StandardCopyOption.REPLACE_EXISTING);
 
-                        log.info("File Uploaded : " + filePath + " Successfully");
+                        // log.info("File Uploaded : " + filePath + " Successfully");
 
                     } catch (IOException e) {
-                        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Upload error : " + e.toString());
+                        log.info("File Exception : " + e.getMessage());
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File Upload error : " + e.getMessage());
                     }
                 }
             }
