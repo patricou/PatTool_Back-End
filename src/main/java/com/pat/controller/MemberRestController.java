@@ -5,13 +5,11 @@ import com.pat.repo.MembersRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 
 /**
@@ -25,6 +23,9 @@ public class MemberRestController {
 
     @Autowired
     private MembersRepository membersRepository;
+
+    @Autowired
+    private MailController mailController;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Member> getListMembers(){
@@ -45,8 +46,10 @@ public class MemberRestController {
         Member memberWithId = membersRepository.findByUserName(member.getUserName());
         // Update the ID
         if (memberWithId != null ) {
-            log.info("memberWithId " + memberWithId);
+            log.info("memberWithId " + memberWithId.getId());
             member.setId(memberWithId.getId());
+
+            mailController.sendMail("User " + member.getUserName() + " ( "+ member.getFirstName()+ " "+member.getLastName()+" ) connected ( server "+ getIp() +" )");
         }
 
         // Save the member in Mlab ( if modif ( like email or... ) ( userName is unqiue )
@@ -62,6 +65,16 @@ public class MemberRestController {
     public Member getMember(@PathVariable String id) {
         log.info("Get Member : " +  id );
         return membersRepository.findOne(id);
+    }
+
+    private String getIp(){
+        try{
+            return InetAddress.getLocalHost().getHostAddress().toString();
+        }catch(UnknownHostException e){
+
+            return "UnknownHostException.";
+
+        }
     }
 
 }

@@ -29,7 +29,7 @@ public class PatToolApplication implements CommandLineRunner {
 
     private void initData() {
 
-        CategoryLink categoryLink = new CategoryLink("1", "Commerce", "Commerce");
+      /*  CategoryLink categoryLink = new CategoryLink("1", "Commerce", "Commerce");
         categoryLinkRepository.save(categoryLink);
         categoryLinkRepository.save(new CategoryLink("2", "Administratif", "Administratif"));
         categoryLinkRepository.save(new CategoryLink("3", "Journeaux", "Journeaux"));
@@ -101,7 +101,7 @@ public class PatToolApplication implements CommandLineRunner {
         urlLinkRepository.save(new UrlLink("62", "K-net", "K-net", "https://www.k-net.fr/", "5"));
         urlLinkRepository.save(new UrlLink("63", "Espace-client.k-net", "Espace-client.k-net", "https://espace-client.k-net.fr/", "5"));
         urlLinkRepository.save(new UrlLink("64", "PAT-NAS-DS923+ (local)", "PAT-NAS-DS923+ (local)", "http://192.168.1.68:5000/", "5"));
-        urlLinkRepository.save(new UrlLink("65", "Fnac", "Fnac", "https://www.fnac.com/", "1"));
+        urlLinkRepository.save(new UrlLink("65", "Fnac", "Fnac", "https://www.fnac.com/", "1")); */
 
     }
 }
