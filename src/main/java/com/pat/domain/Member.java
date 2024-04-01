@@ -1,5 +1,6 @@
 package com.pat.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +16,8 @@ public class Member {
     private String addressEmail;
     private String userName;
     private String keycloakId;
+    @JsonIgnore
+    private String roles;
 
     public Member( String firstName, String lastName, String userName, String addressEmail){
         this.firstName = firstName;
@@ -72,6 +75,14 @@ public class Member {
 
     public void setKeycloakId(String keycloakId) {
         this.keycloakId = keycloakId;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
     }
 }
 

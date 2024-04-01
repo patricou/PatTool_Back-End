@@ -1,5 +1,7 @@
 package com.pat.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.gridfs.GridFSDBFile;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,8 +34,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -49,6 +54,8 @@ public class FileRestController {
     private MembersRepository membersRepository;
     @Autowired
     private GridFsTemplate gridFsTemplate;
+    @Autowired
+    private MailController mailController;
 
     private static final Logger log = LoggerFactory.getLogger(FileRestController.class);
 
@@ -72,8 +79,7 @@ public class FileRestController {
     }
 
     @PostMapping("/uploadondisk")
-    public ResponseEntity<String> handleFileUpload(@RequestParam("files") MultipartFile[] files) {
-
+    public ResponseEntity<String> handleFileUpload(@RequestParam("files") MultipartFile[] files, HttpServletRequest request) {
 
         LocalDate date = LocalDate.now();
 
@@ -99,15 +105,43 @@ public class FileRestController {
                             Files.createDirectories(uploadPath);
                         }
 
-                        //log.info("uploadPath : "+uploadPath.getParent()+ " / "+uploadPath.getFileName());
-
                         Path filePath = uploadPath.resolve(file.getOriginalFilename());
-
-                        //log.info("filePath : " +filePath.getParent()+ " / " + filePath.getFileName());
-
                         Files.copy(file.getInputStream(), filePath,StandardCopyOption.REPLACE_EXISTING);
 
                         // log.info("File Uploaded : " + filePath + " Successfully");
+
+                        String ipAddress = request.getHeader("X-Forwarded-For");
+                        if (ipAddress == null) {
+                            ipAddress = request.getRemoteAddr();
+                        }
+
+                        String subject = "Upload Photo " + filePath.getFileName();
+                        String body = subject;
+
+                        Enumeration<String> headerNames = request.getHeaderNames();
+                        Map<String, String> headers = new HashMap<>();
+
+                        while (headerNames.hasMoreElements()) {
+                            String headerName = headerNames.nextElement();
+                            String headerValue = request.getHeader(headerName);
+
+                            ObjectMapper objectMapper = new ObjectMapper();
+
+                            if ("user".equals(headerName.toString())){
+                                try{
+                                    Member user = objectMapper.readValue(headerValue, Member.class);
+                                    subject = subject + " from : "+ user.getUserName() + " ( " + user.getFirstName()+" "+user.getLastName()+" )";
+                                }catch(JsonProcessingException je){
+                                    log.info("Issue to Unwrap user : " + je.getMessage());
+                                }
+                            }
+
+                            if (! "authorization".equals(headerName.toString()) )
+                                body = body + "\n" + headerName + " : "+ headerValue;
+                        }
+
+                        mailController.sendMailWithAttachement(subject,body,filePath.toString());
+
 
                     } catch (IOException e) {
                         log.info("File Exception : " + e.getMessage());

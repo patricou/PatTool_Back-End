@@ -8,9 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by patricou on 4/20/2017.
@@ -39,7 +44,7 @@ public class MemberRestController {
             produces = { "application/json"}
     )
     @ResponseBody
-    public Member getMemberbyUserNameAndRetrieveId(@RequestBody Member member){
+    public Member getMemberbyUserNameAndRetrieveId(@RequestBody Member member, HttpServletRequest request){
         log.info("Member Recieved : " +  member.getKeycloakId() );
         member.setId(null);
         // retrieve Mlab Id by userName ( would have been better by keycloakId )
@@ -49,7 +54,24 @@ public class MemberRestController {
             log.info("memberWithId " + memberWithId.getId());
             member.setId(memberWithId.getId());
 
-            mailController.sendMail("User " + member.getUserName() + " ( "+ member.getFirstName()+ " "+member.getLastName()+" ) connected ( server "+ getIp() +" )");
+            String ipAddress = request.getHeader("X-Forwarded-For");
+            if (ipAddress == null) {
+                ipAddress = request.getRemoteAddr();
+            }
+
+            String subject = "User " + member.getUserName() + " ( "+ member.getFirstName()+ " "+member.getLastName() +" )";
+            String body = subject +  " \nConnected on server "+ getIp() +" \nFrom Ip : " + ipAddress+"\n\n Headers :";
+
+            Enumeration<String> headerNames = request.getHeaderNames();
+            Map<String, String> headers = new HashMap<>();
+
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                String headerValue = request.getHeader(headerName);
+                if (! "authorization".equals(headerName.toString()))
+                    body = body + "\n" + headerName + " : "+ headerValue;
+            }
+            mailController.sendMail(subject,body);
         }
 
         // Save the member in Mlab ( if modif ( like email or... ) ( userName is unqiue )
