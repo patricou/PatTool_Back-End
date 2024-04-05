@@ -115,8 +115,9 @@ public class FileRestController {
                             ipAddress = request.getRemoteAddr();
                         }
 
-                        String subject = "Upload Photo " + filePath.getFileName();
-                        String body = subject;
+                        String subject = "Upload Photo on Disk " + filePath.getFileName();
+                        String body = subject + "\n" + " from IP : " + ipAddress;
+                        body = body + "\n\nHeader : ";
 
                         Enumeration<String> headerNames = request.getHeaderNames();
                         Map<String, String> headers = new HashMap<>();

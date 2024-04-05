@@ -53,6 +53,7 @@ public class Evenement {
     private String diffculty;
     private String startLocation;
     private String durationEstimation;
+    private String visibility;
 
     public List<Member> getMembers() {
         return members;
@@ -220,6 +221,42 @@ public class Evenement {
 
     public void setPhotosUrl(String photosUrl) {
         this.photosUrl = photosUrl;
+    }
+
+    public String getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
+    }
+
+    @Override
+    public String toString() {
+        return "Evenement{" +
+                "id='" + id + '\'' +
+                ", evenementName='" + evenementName + '\'' +
+                ", creationDate=" + creationDate +
+                ", openInscriptionDate=" + openInscriptionDate +
+                ", closeInscriptionDate=" + closeInscriptionDate +
+                ", author=" + author +
+                ", map='" + map + '\'' +
+                ", photosUrl='" + photosUrl + '\'' +
+                ", comments='" + comments + '\'' +
+                ", endEventDate=" + endEventDate +
+                ", beginEventDate=" + beginEventDate +
+                ", status='" + status + '\'' +
+                ", type='" + type + '\'' +
+                ", ratingPlus=" + ratingPlus +
+                ", ratingMinus=" + ratingMinus +
+                ", members=" + members +
+                ", fileUploadeds=" + fileUploadeds +
+                ", startHour='" + startHour + '\'' +
+                ", diffculty='" + diffculty + '\'' +
+                ", startLocation='" + startLocation + '\'' +
+                ", durationEstimation='" + durationEstimation + '\'' +
+                ", Visibility=" + visibility +
+                '}';
     }
 }
 

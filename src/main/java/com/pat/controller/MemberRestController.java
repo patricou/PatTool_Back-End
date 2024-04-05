@@ -59,7 +59,7 @@ public class MemberRestController {
                 ipAddress = request.getRemoteAddr();
             }
 
-            String subject = "User " + member.getUserName() + " ( "+ member.getFirstName()+ " "+member.getLastName() +" )";
+            String subject = "Connection User " + member.getUserName() + " ( "+ member.getFirstName()+ " "+member.getLastName() +" )";
             String body = subject +  " \nConnected on server "+ getIp() +" \nFrom Ip : " + ipAddress+"\n\n Headers :";
 
             Enumeration<String> headerNames = request.getHeaderNames();
@@ -71,7 +71,9 @@ public class MemberRestController {
                 if (! "authorization".equals(headerName.toString()))
                     body = body + "\n" + headerName + " : "+ headerValue;
             }
-            mailController.sendMail(subject,body);
+            if (!"patricou".equals(member.getUserName().toLowerCase()))
+                mailController.sendMail(subject,body);
+            log.info(subject + " From ip : "+ getIp());
         }
 
         // Save the member in Mlab ( if modif ( like email or... ) ( userName is unqiue )

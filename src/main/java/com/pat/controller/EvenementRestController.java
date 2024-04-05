@@ -27,9 +27,12 @@ public class EvenementRestController {
     @Autowired
     private EvenementsRepository evenementsRepository;
 
-    @RequestMapping(value = "/{evenementName}/{page}/{size}", method = RequestMethod.GET)
-    public Page<Evenement> getListEvenement(@PathVariable("evenementName") String evenementName, @PathVariable("page") int page, @PathVariable("size") int size){
-        log.info("Get evenement : "+evenementName+" / page : "+ page +" / size : " +size );
+    @RequestMapping(value = "/{evenementName}/{page}/{size}/{userid}", method = RequestMethod.GET)
+    public Page<Evenement> getListEvenement(@PathVariable("evenementName") String evenementName,
+                                            @PathVariable("page") int page,
+                                            @PathVariable("size") int size,
+                                            @PathVariable("userid") String userId) {
+        log.info("Get evenement : "+evenementName+" / page : "+ page +" / size : " +size+ " / User Id : "+ userId );
         Pageable pageable = new PageRequest( page, size, Sort.Direction.DESC,"beginEventDate");
         return evenementsRepository.findByEvenementNameLikeIgnoreCase(pageable, evenementName );
     }
@@ -62,7 +65,7 @@ public class EvenementRestController {
 
         Evenement eventSaved = evenementsRepository.save(evenement);
 
-        log.info("Evenements PUT " + eventSaved +" Updated !");
+        log.info("Evenements PUT " + eventSaved.getEvenementName()+" Updated ! ( Visbility "+ eventSaved.getVisibility() +") ");
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(ServletUriComponentsBuilder
