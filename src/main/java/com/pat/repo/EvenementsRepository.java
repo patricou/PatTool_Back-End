@@ -20,9 +20,7 @@ import java.util.List;
 @RepositoryRestResource(collectionResourceRel = "evenements", path = "evenements")
 public interface EvenementsRepository extends PagingAndSortingRepository<Evenement, String> , MongoRepository<Evenement,String> {
 
-    Page<Evenement> findByEvenementNameLikeIgnoreCase(Pageable pageable, String eventName );
-
-    Page<Evenement> findAll(Pageable pageable);
+    Page<Evenement> findByEvenementNameLikeIgnoreCaseAndAuthor_idOrEvenementNameLikeIgnoreCaseAndVisibility(Pageable pageable, String eventName1, String AuthorId,String eventName2, String visibility );
 
 }
 

@@ -33,8 +33,13 @@ public class EvenementRestController {
                                             @PathVariable("size") int size,
                                             @PathVariable("userid") String userId) {
         log.info("Get evenement : "+evenementName+" / page : "+ page +" / size : " +size+ " / User Id : "+ userId );
+
         Pageable pageable = new PageRequest( page, size, Sort.Direction.DESC,"beginEventDate");
-        return evenementsRepository.findByEvenementNameLikeIgnoreCase(pageable, evenementName );
+
+        Page<Evenement> evenements = evenementsRepository.findByEvenementNameLikeIgnoreCaseAndAuthor_idOrEvenementNameLikeIgnoreCaseAndVisibility(pageable, evenementName, userId,evenementName,"public" );;
+
+
+        return evenements;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
