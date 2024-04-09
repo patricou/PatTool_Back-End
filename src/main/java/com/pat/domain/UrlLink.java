@@ -9,7 +9,6 @@ import javax.validation.constraints.NotNull;
 public class UrlLink {
     @Id
     private String id;
-    @NotNull
     private String urlLinkID;
     @NotNull
     private String linkDescription;
@@ -19,14 +18,37 @@ public class UrlLink {
     private String url;
     @NotNull
     private String categoryLinkID;
+    @NotNull
+    public String visibility;
+    @NotNull
+    public Member author;
 
-    public UrlLink(String urlLinkID,String linkDescription,String linkName,String url,String categoryLinkID ){
+    public UrlLink() {}
+
+public UrlLink(String id, String urlLinkID, String linkDescription, String linkName, String url, String categoryLinkID, String visibility, Member author) {
+        this.id = id;
         this.urlLinkID = urlLinkID;
         this.linkDescription = linkDescription;
         this.linkName = linkName;
         this.url = url;
         this.categoryLinkID = categoryLinkID;
-    };
+        this.visibility = visibility;
+        this.author = author;
+    }
+
+    @Override
+    public String toString() {
+        return "UrlLink{" +
+                "id='" + id + '\'' +
+                ", urlLinkID='" + urlLinkID + '\'' +
+                ", linkDescription='" + linkDescription + '\'' +
+                ", linkName='" + linkName + '\'' +
+                ", url='" + url + '\'' +
+                ", categoryLinkID='" + categoryLinkID + '\'' +
+                ", visibility='" + visibility + '\'' +
+                ", author=" + author +
+                '}';
+    }
 
     public String getId() {
         return id;
@@ -74,5 +96,21 @@ public class UrlLink {
 
     public void setCategoryLinkID(String categoryLinkID) {
         this.categoryLinkID = categoryLinkID;
+    }
+
+    public String getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
+    }
+
+    public Member getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Member author) {
+        this.author = author;
     }
 }

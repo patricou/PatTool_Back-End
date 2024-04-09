@@ -1,19 +1,23 @@
 package com.pat.controller;
 
+import com.pat.domain.Evenement;
 import com.pat.domain.UrlLink;
 import com.pat.repo.UrlLinkRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.awt.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/urllink")
+@RequestMapping("/api")
 public class UrlLinkRestController {
 
     private static final Logger log = LoggerFactory.getLogger(UrlLinkRestController.class);
@@ -21,7 +25,7 @@ public class UrlLinkRestController {
     @Autowired
     UrlLinkRepository urlLinkRepository;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @GetMapping(value="/urllink", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<UrlLink> getUrlLink(){
 
         log.info("Get urlLink");
@@ -29,5 +33,13 @@ public class UrlLinkRestController {
         return urlLinkRepository.findAll(sort);
     }
 
+    @PutMapping(value="/visibility")
+    public ResponseEntity<UrlLink> updatevisibilty(@RequestBody UrlLink urlLink) {
 
+        log.info("Update visibility :"+ urlLink.toString());
+
+        UrlLink urlLink1 = urlLinkRepository.save(urlLink);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        return new ResponseEntity<>(urlLink1, HttpStatus.OK);
+    }
 }

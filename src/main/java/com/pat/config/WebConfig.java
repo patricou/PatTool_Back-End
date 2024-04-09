@@ -55,6 +55,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addMapping("/api/urllink/")
                 .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
                 .allowedOrigins("http://localhost:4200");
+        registry.addMapping("/api/visibility/")
+                .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
+                .allowedOrigins("http://localhost:4200");
         registry.addMapping("/api/categories/")
                 .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
                 .allowedOrigins("http://localhost:4200");
