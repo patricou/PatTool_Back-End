@@ -1,6 +1,7 @@
 package com.pat.domain;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
@@ -19,9 +20,10 @@ public class UrlLink {
     @NotNull
     private String categoryLinkID;
     @NotNull
-    public String visibility;
+    private String visibility;
     @NotNull
-    public Member author;
+    @DBRef
+    private Member author;
 
     public UrlLink() {}
 

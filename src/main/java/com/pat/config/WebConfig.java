@@ -52,13 +52,16 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addMapping("/uploadondisk/**")
                 .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
                 .allowedOrigins("http://localhost:4200");
-        registry.addMapping("/api/urllink/")
+        registry.addMapping("/api/urllink/**")
                 .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
                 .allowedOrigins("http://localhost:4200");
         registry.addMapping("/api/visibility/")
                 .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
                 .allowedOrigins("http://localhost:4200");
         registry.addMapping("/api/categories/")
+                .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
+                .allowedOrigins("http://localhost:4200");
+        registry.addMapping("/api/v1/chat/")
                 .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
                 .allowedOrigins("http://localhost:4200");
 

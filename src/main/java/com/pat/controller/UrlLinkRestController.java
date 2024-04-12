@@ -25,12 +25,12 @@ public class UrlLinkRestController {
     @Autowired
     UrlLinkRepository urlLinkRepository;
 
-    @GetMapping(value="/urllink", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<UrlLink> getUrlLink(){
+    @GetMapping(value="/urllink/{userid}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<UrlLink> getUrlLink(@PathVariable("userid") String userId){
 
-        log.info("Get urlLink");
+        log.info("Get urlLink / User Id : "+ userId);
         Sort sort = new Sort(Sort.Direction.ASC,"linkName");
-        return urlLinkRepository.findAll(sort);
+        return urlLinkRepository.findByVisibilityOrAuthor_Id(sort,"public",userId);
     }
 
     @PutMapping(value="/visibility")
