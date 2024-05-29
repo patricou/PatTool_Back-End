@@ -1,6 +1,5 @@
 package com.pat.service;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -25,8 +24,6 @@ public class SmtpMailSender {
 
     @Autowired
     private JavaMailSender javaMailSender;
-
-    private static org.apache.log4j.Logger log = Logger.getLogger(SmtpMailSender.class);
 
     @Async
     public void sendMail(String from,String to, String subject, String body){
@@ -55,8 +52,6 @@ public class SmtpMailSender {
             helper.setSubject(subject);
             helper.setText(body);
             helper.addAttachment(attachement, new FileSystemResource(new File(attachement)));
-
-            log.info("Mail sent for Image " + attachement );
 
         } catch (MessagingException e) {
             e.printStackTrace();

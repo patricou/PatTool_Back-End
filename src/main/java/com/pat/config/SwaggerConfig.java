@@ -26,7 +26,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("PATOOL API")
+                .title("PATTOOL API")
                 .description("API Documentation for PATTOOL.")
                 .version("1.0")
                 .build();
