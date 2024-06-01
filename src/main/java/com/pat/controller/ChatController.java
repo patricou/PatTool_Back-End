@@ -23,12 +23,14 @@ public class ChatController {
 
     private static final Logger log = LoggerFactory.getLogger(ChatController.class);
 
-    @PostMapping( value="/chat/{withHistoricalContext}")
-    public ResponseEntity<String> getResponse(@RequestBody ChatRequest chatRequest,@PathVariable boolean withHistoricalContext) {
+    @PostMapping( value="/chat/{withHistoricalContext}/{withLastXQuestions}")
+    public ResponseEntity<String> getResponse(@RequestBody ChatRequest chatRequest,
+                                              @PathVariable boolean withHistoricalContext,
+                                              @PathVariable boolean withLastXQuestions) {
 
         //log.info("Question {}, ( with historical : {} )", chatRequest.getUserInput(),hist);
 
-        String response = chatService.getChatResponse(chatRequest.getUserInput(),withHistoricalContext);
+        String response = chatService.getChatResponse(chatRequest.getUserInput(),withHistoricalContext,withLastXQuestions);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json; charset=UTF-8");

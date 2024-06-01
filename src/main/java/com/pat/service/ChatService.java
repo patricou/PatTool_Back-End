@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +24,9 @@ public class ChatService {
     @Value("${openai.api}")
     private String apiUrl;
 
+    @Value("${app.maxContextSize}")
+    private int maxContextSize;
+
     private final RestTemplate restTemplate;
     private final ChatRequestRepository chatRequestRepository;
 
@@ -34,16 +35,14 @@ public class ChatService {
         this.chatRequestRepository = chatRequestRepository;
     }
 
-    public  String getChatResponse(String userInput, boolean withHistoricalContext) {
+    public  String getChatResponse(String userInput, boolean withHistoricalContext, boolean takeXlast) {
         // Récupérer tout l'historique des requêtes
         List<ChatRequest> chatHistory = chatRequestRepository.findAll();
 
         // Construire le contexte de la conversation ( if without context it is less expensive )
         String context = withHistoricalContext ?
                 //true
-                chatHistory.stream()
-                .map(chatRequest -> "User: " + chatRequest.getUserInput() + "\nAI: " + chatRequest.getChatResponse())
-                .collect(Collectors.joining("\n")) + "\nUser: " + userInput
+                buildContext(chatHistory, userInput,takeXlast)
                 :
                 // false
                 "\nUser: " + userInput;
@@ -53,12 +52,13 @@ public class ChatService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
         //headers.set("Content-Type", "application/json; charset=UTF-8");
+        headers.set("Content-Encoding", "gzip");
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // Construire le corps de la requête en utilisant une Map
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("messages", List.of(Map.of("role", "user", "content", context)));
-        requestBody.put("max_tokens", 1000);
+        requestBody.put("max_tokens", 2000);
         requestBody.put("model", "gpt-4o");  // Use the correct model you have access to
 
         //log.info("Request Body :  " + requestBody);
@@ -72,6 +72,40 @@ public class ChatService {
         chatRequestRepository.save(chatRequest);
 
         return  decodeUtf8(response.getBody());
+    }
+
+    private String buildContext(List<ChatRequest> chatHistory, String userInput, boolean takeXlast) {
+        // Determine the max size for context to avoid payload too large
+        // int maxContextSize = 10000; // Adjust this value as needed
+        StringBuilder contextBuilder = new StringBuilder();
+        StringBuilder contextBuilder2 = new StringBuilder();
+
+        List<ChatRequest> chatHistory2 = new ArrayList<ChatRequest>();
+
+        // Reverse the chat history list
+        if ( takeXlast ) Collections.reverse(chatHistory);
+
+        for (ChatRequest chatRequest : chatHistory) {
+            String entry = "User: " + chatRequest.getUserInput() + "\nAI: " + chatRequest.getChatResponse() + "\n";
+            if (contextBuilder.length() + entry.length() > maxContextSize) {
+                break;
+            }
+
+            contextBuilder.insert(0, entry);
+            chatHistory2.add(chatRequest);
+        }
+
+        if ( takeXlast ) Collections.reverse(chatHistory2);
+
+        for (ChatRequest chatRequest : chatHistory2) {
+            String entry = "User: " + chatRequest.getUserInput() + "\nAI: " + chatRequest.getChatResponse() + "\n";
+
+            contextBuilder2.insert(0, entry);
+        }
+
+        contextBuilder2.append("User: ").append(userInput);
+
+        return contextBuilder2.toString();
     }
 
     private String decodeUtf8(String input) {
