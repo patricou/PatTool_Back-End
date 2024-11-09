@@ -70,7 +70,9 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         registry.addMapping("/api/delchat/")
                 .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
                 .allowedOrigins("http://localhost:4200");
-
+        registry.addMapping("/api/opcl/")
+                .allowedMethods("GET","PUT","POST","DELETE","OPTIONS")
+                .allowedOrigins("http://localhost:4200");
 
     }
 }
