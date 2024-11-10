@@ -51,9 +51,10 @@ public class ChatService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
-        //headers.set("Content-Type", "application/json; charset=UTF-8");
         headers.set("Content-Encoding", "gzip");
         headers.setContentType(MediaType.APPLICATION_JSON);
+        //headers.setContentType(MediaType.parseMediaType("application/json; charset=UTF-8"));
+
 
         // Construire le corps de la requête en utilisant une Map
         Map<String, Object> requestBody = new HashMap<>();
@@ -71,7 +72,9 @@ public class ChatService {
 
         chatRequestRepository.save(chatRequest);
 
-        return  decodeUtf8(response.getBody());
+        // Specials char were badly displayed 20241110
+        //return  decodeUtf8(response.getBody());
+        return response.getBody();
     }
 
     private String buildContext(List<ChatRequest> chatHistory, String userInput, boolean takeXlast) {
