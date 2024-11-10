@@ -4,6 +4,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class HomeIOTService {
 
@@ -13,7 +16,7 @@ public class HomeIOTService {
         this.restTemplate = restTemplate;
     }
 
-    public String openOrClosePortail() {
+    public  Map<String, Object> openOrClosePortail() {
 
         String url = "http://192.168.1.65/api/openorclose";
 
@@ -23,18 +26,20 @@ public class HomeIOTService {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(
+            ResponseEntity<Map> response = restTemplate.exchange(
                     url,
                     HttpMethod.POST,
                     requestEntity,
-                    String.class
+                    Map.class
             );
 
             return  response.getBody();
 
         } catch (Exception e) {
             e.printStackTrace();
-            return "Arduino Exception"+ e.getMessage();
+            Map map = new HashMap();
+            map.put("Arduino Exception", e);
+            return map;
         }
     }
 }

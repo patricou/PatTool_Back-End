@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 public class HomeIOTController {
@@ -19,7 +21,7 @@ public class HomeIOTController {
     }
 
     @PostMapping(value = "/opcl")
-    public String openOrCLosePortail() {
+    public Map<String, Object> openOrCLosePortail() {
         log.info("Open or close Portail");
         return homeIOTService.openOrClosePortail();
     }
