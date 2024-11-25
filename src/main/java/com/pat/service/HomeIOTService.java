@@ -42,4 +42,31 @@ public class HomeIOTService {
             return map;
         }
     }
+
+    public  Map<String, Object> testEthernetShield2() {
+
+        String url = "http://192.168.1.65/api/test";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String requestBody = "{\"command\": \"test\"}";
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    Map.class
+            );
+
+            return  response.getBody();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map map = new HashMap();
+            map.put("Arduino Exception during the test", e);
+            return map;
+        }
+    }
 }

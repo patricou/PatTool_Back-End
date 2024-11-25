@@ -26,4 +26,10 @@ public class HomeIOTController {
         return homeIOTService.openOrClosePortail();
     }
 
+    @PostMapping(value = "/test")
+    public Map<String, Object> testEthernetShield2() {
+        log.info("Test Ethernet shield 2");
+        return homeIOTService.testEthernetShield2();
+    }
+
 }
