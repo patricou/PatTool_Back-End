@@ -1,5 +1,8 @@
 package com.pat.service;
 
+import com.pat.controller.HomeIOTController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -11,10 +14,15 @@ import java.util.Map;
 @Service
 public class HomeIOTService {
 
+    private static final Logger log = LoggerFactory.getLogger(HomeIOTService.class);
+
     private final RestTemplate restTemplate;
 
     @Value("${app.arduino.ip}")
     private String arduinoIp;
+
+    @Value("${app.esp32.1.ip}")
+    private String esp321Ip;
 
     public HomeIOTService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -58,4 +66,59 @@ public class HomeIOTService {
             return map;
         }
     }
+
+    public String getStatusOfRelais1(){
+        String url =  "http://"+esp321Ip+"/relay/status";
+
+        try {
+            // Effectuer la requête GET
+            String response = restTemplate.getForObject(url, String.class);
+
+            // Afficher la réponse
+            log.info("Response Relais Status : " + response);
+
+            return response;
+        } catch (Exception e) {
+            // Gérer les exceptions
+            log.info("Error Relais Status: " + e.getMessage());
+            return(e.getMessage());
+        }
+    }
+
+    public String setStatusOfRelais1ToOn(){
+        String url =  "http://"+esp321Ip+"/relay/on";
+
+        try {
+            // Effectuer la requête GET
+            String response = restTemplate.getForObject(url, String.class);
+
+            // Afficher la réponse
+            log.info("Response Relais On : " + response);
+
+            return response;
+        } catch (Exception e) {
+            // Gérer les exceptions
+            log.info("Error Relais On: " + e.getMessage());
+            return(e.getMessage());
+        }
+    }
+
+    public String setStatusOfRelais1ToOff(){
+        String url =  "http://"+esp321Ip+"/relay/off";
+
+        try {
+            // Effectuer la requête GET
+            String response = restTemplate.getForObject(url, String.class);
+
+            // Afficher la réponse
+            log.info("Response Relais Off : " + response);
+
+            return response;
+        } catch (Exception e) {
+            // Gérer les exceptions
+            log.info("Error Relais off : " + e.getMessage());
+            return(e.getMessage());
+        }
+    }
+
 }

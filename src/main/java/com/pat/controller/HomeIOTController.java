@@ -51,7 +51,21 @@ public class HomeIOTController {
             map.put("Unauthorized",member.getUserName() + " : You are not Authorized to Test the Arduino ");
             return map;
         }
+    }
 
+    @GetMapping(value = "/relais1statuson", produces = { "application/json"})
+    public String setValueOfRelais1On(){
+        return homeIOTService.setStatusOfRelais1ToOn();
+    }
+
+    @GetMapping(value = "/relais1statusoff", produces = { "application/json"})
+    public String setValueOfRelais1Off(){
+        return homeIOTService.setStatusOfRelais1ToOff();
+    }
+
+    @GetMapping(value = "/relais1status", produces = { "application/json"})
+    public String getValueOfRelais1(){
+        return homeIOTService.getStatusOfRelais1();
     }
 
 }
